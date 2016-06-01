@@ -1,0 +1,57 @@
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: normal;
+}
+
+.site-container {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 1280px;
+    text-align: left;
+}
+
+.dist-container {
+    margin: 0 auto;
+    position: relative;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 2px;
+}
+
+.dist-container--vh-sm { height: 250px; }
+.dist-container--vh-md { height: 500px; }
+.dist-container--vh-lg { height: 750px; }
+.dist-container--vh-half { height: 50vh; }
+.dist-container--vh-full { height: 100vh; }
+
+.wave-photo {
+    z-index: 2;
+    position: relative;
+    display: inline-block;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.wave-container {
+    position: relative;
+    height: 100%;
+}
+
+.wave-container canvas {
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.wave-photo img {
+    display: block;
+    max-width: 100%;
+}
+
+.wave-photo--40 {
+    width: 40px;
+    height: 40px;
+}
