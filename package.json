@@ -1,11 +1,11 @@
 {
-  "name": "wavy",
+  "name": "wavy-canvas",
   "version": "0.0.1",
   "description": "",
   "main": "src/index.js",
   "keywords": ["wavy", "waves", "canvas"],
   "author": "Dawid Karabin",
-  "license": "MIT"
+  "license": "MIT",
   "scripts": {
     "start": "npm-run-all --parallel serve watch",
     "serve": "live-server ./ --open=dist --port=8000 --ignore=node_modules",
