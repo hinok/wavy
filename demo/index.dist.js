@@ -1103,6 +1103,7 @@ function getRGBA(color) {
 
   return 'rgba(' + red + ', ' + green + ', ' + blue + ', ' + alpha + ')';
 }
+module.exports = exports['default'];
 
 },{"hex-rgb":5}],12:[function(require,module,exports){
 'use strict';
@@ -1402,6 +1403,7 @@ function make(options) {
 
   return new Wavy(options);
 }
+module.exports = exports['default'];
 
 },{"./Circle":11,"./offsetParent":13,"easing-js":3,"hidpi-canvas/dist/hidpi-canvas":6,"object-assign":7,"raf":10}],13:[function(require,module,exports){
 "use strict";
@@ -1424,5 +1426,6 @@ function offsetParent(parent, child) {
     y: -(pRect.top - cRect.top - cRect.height / 2)
   };
 }
+module.exports = exports["default"];
 
 },{}]},{},[1]);
