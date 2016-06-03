@@ -1,0 +1,119 @@
+*, *:after, *:before {
+    box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: normal;
+}
+
+html, body {
+    padding: 0;
+    margin: 0;
+}
+
+pre {
+    padding: 0;
+    margin: 0;
+}
+
+.site-container {
+    width: 100%;
+    text-align: left;
+}
+
+.demo-container {
+    margin: 0 auto;
+    position: relative;
+}
+
+.demo-container h1,
+.demo-container h2,
+.demo-container h3,
+.demo-container h4,
+.demo-container h5,
+.demo-container h6 {
+    position: absolute;
+    bottom: 50px;
+    right: 50px;
+    color: #fff;
+}
+
+.demo-container button {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    display: inline-block;
+    font-size: 16px;
+    line-height: 1;
+    padding: 0.5em 0.8em;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    outline: 0;
+}
+
+.demo-container button:hover {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.demo-container button:active {
+    background: rgba(0, 0, 0, 1);
+}
+
+.demo-container--vh-sm { height: 250px; }
+.demo-container--vh-md { height: 500px; }
+.demo-container--vh-lg { height: 750px; }
+.demo-container--vh-half { height: 50vh; }
+.demo-container--vh-full { height: 100vh; }
+
+.demo-container-buttons {
+    z-index: 3;
+    position: absolute;
+    bottom: 50px;
+    left: 50px;
+}
+
+.demo-container-options {
+    z-index: 3;
+    position: absolute;
+    top: 50px;
+    right: 50px;
+    background: #fff;
+    border-radius: 3px;
+    padding: 30px;
+    color: rgba(0, 0, 0, 0.66);
+    line-height: 1.33;
+}
+
+.demo-container-options--left {
+    right: inherit;
+    left: 50px;
+}
+
+.demo-a { background: #26C6DA; }
+.demo-b { background: #F5D133; }
+.demo-c { background: #4DB6AC; }
+
+.demo-a .wavy-photo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -20px 0 0 -20px;
+}
+
+.demo-b .wavy-photo {
+    position: absolute;
+    top: 25%;
+    left: 75%;
+    margin: -20px 0 0 -20px;
+}
+
+.demo-c .wavy-photo {
+    position: absolute;
+    top: 100px;
+    left: 100px;
+    margin: -20px 0 0 -20px;
+}

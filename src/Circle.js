@@ -1,36 +1,64 @@
 import hexRGB from 'hex-rgb';
 
-var circles = [];
-
-class Circle {
+export default class Circle {
   constructor(radius = 40, hexFillColor = "#ff0000", hexStrokeColor) {
     this.radius = radius;
     this.setFillStyle(hexFillColor, 0);
     this.setStrokeStyle(hexStrokeColor || hexFillColor, 1);
 
-    circles.push(this);
-    
     this.x = 0;
     this.y = 0;
     this.rotation = 0;
     this.scaleX = 1;
     this.scaleY = 1;
-    this.lineWidth = 0.5; // 0.5 is a bit sharper than 1
+    this.lineWidth = 0.5; // 0.5 is a bit thinner than 1
   }
 
+  /**
+   * @param {{x: number, y:number}} scale
+   */
   setScale(scale) {
     this.scaleX = (scale.x < 0) ? 0 : scale.x;
     this.scaleY = (scale.y < 0) ? 0 : scale.y;
   }
 
+  /**
+   * @param {string} color
+   * @param {number} alpha
+   */
   setFillStyle(color, alpha) {
-    this.fillStyle = getRGBA(getColor(color, alpha));
+    this.fillColor = getColor(color, alpha);
+    this.fillStyle = getRGBA(this.fillColor);
   }
 
+  /**
+   * @param {string} color
+   * @param {number} alpha
+   */
   setStrokeStyle(color, alpha) {
-    this.strokeStyle = getRGBA(getColor(color, alpha));
+    this.strokeColor = getColor(color, alpha);
+    this.strokeStyle = getRGBA(this.strokeColor);
   }
 
+  /**
+   * @param {number} alpha
+   */
+  setFillAlpha(alpha) {
+    this.fillColor.alpha = alpha;
+    this.fillStyle = getRGBA(this.fillColor);
+  }
+
+  /**
+   * @param {number} alpha
+   */
+  setStrokeAlpha(alpha) {
+    this.strokeColor.alpha = alpha;
+    this.strokeStyle = getRGBA(this.strokeColor);
+  }
+
+  /**
+   * @param {CanvasRenderingContext2D} context
+   */
   draw(context) {
     context.save();
 
@@ -46,7 +74,7 @@ class Circle {
     context.arc(0, 0, this.radius, 0, (Math.PI * 2), true);
     context.closePath();
 
-    // context.fill();
+    context.fill();
 
     if (this.lineWidth > 0) {
       context.strokeStyle = this.strokeStyle;
@@ -57,6 +85,11 @@ class Circle {
   }
 }
 
+/**
+ * @param {string} color - HEX representation of color, can be used with # or without #
+ * @param {number} alpha
+ * @returns {{red:number, green:number, blue:number, alpha: number}}
+ */
 function getColor(color, alpha = 1) {
   if (typeof color !== 'string') {
     throw new Error('color argument must be defined in the hex format as a string');
@@ -82,9 +115,11 @@ function getColor(color, alpha = 1) {
   };
 }
 
+/**
+ * @param {{red:number, green:number, blue:number, alpha: number}} color
+ * @returns {string}
+ */
 function getRGBA(color) {
   const {red, green, blue, alpha} = color;
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 }
-
-export default Circle;

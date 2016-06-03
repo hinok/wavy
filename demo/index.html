@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Wavy Canvas</title>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="/dist/style.css">
+    <link rel="stylesheet" href="/demo/style.css">
+  </head>
+  <body>
+
+    <div class="site-container">
+
+      <div class="demo-a demo-container demo-container--vh-full">
+        <div class="js-demo-a wavy-container">
+          <div class="wavy-photo wavy-photo--40">
+            <img src="/demo/assets/photo.jpg">
+          </div>
+        </div>
+
+        <div class="demo-container-options">
+          <pre>var options = {
+  radiuses: [10, 30, 50, 80, 120, 160, 200, 280],
+  hexFillColor: '#fff',
+  hexStrokeColor: '#fff',
+  onlyWaves: false,
+  duration: 3000,
+  selector: '.js-demo-a',
+  centerWave: {
+    x: 250,
+    y: 250
+  }
+};</pre>
+        </div>
+      </div>
+
+      <div class="demo-b demo-container demo-container--vh-full">
+        <div class="js-demo-b wavy-container">
+          <div class="js-wavy-center wavy-photo wavy-photo--40">
+            <img src="/demo/assets/photo.jpg">
+          </div>
+        </div>
+
+        <div class="demo-container-options demo-container-options--left">
+          <pre>var options = {
+  radiuses: [10, 20, 30, 40, 50, 60, 70, 80],
+  hexFillColor: '#fff',
+  hexStrokeColor: '#fff',
+  duration: 5000,
+  selector: '.js-demo-b'
+};</pre>
+        </div>
+
+        <div class="demo-container-buttons">
+          <button id="js-demo-start">Start</button>
+          <button id="js-demo-stop">Stop</button>
+        </div>
+      </div>
+
+      <div class="demo-c demo-container demo-container--vh-full">
+        <div class="js-demo-c wavy-container">
+          <div class="js-wavy-center wavy-photo wavy-photo--40">
+            <img src="/demo/assets/photo.jpg">
+          </div>
+        </div>
+
+        <div class="demo-container-options">
+          <pre>var options = {
+  radiuses: [10, 30, 50, 80, 120, 500],
+  hexFillColor: '#fff',
+  hexStrokeColor: '#fff',
+  duration: 1000,
+  selector: '.js-demo-c'
+};</pre>
+        </div>
+      </div>
+
+    </div>
+
+    <script src="/demo/index.dist.js"></script>
+
+  </body>
+</html>
