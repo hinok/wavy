@@ -32,9 +32,18 @@ docReady(() => {
     selector: '.js-demo-c'
   };
 
+  var dOptions = {
+    radiuses: [10, 30, 50, 80, 120, 200],
+    hexFillColor: '#fff',
+    hexStrokeColor: '#fff',
+    duration: 1000,
+    selectorEl: document.querySelector('.js-demo-d')
+  };
+
   var aWavy = new Wavy(aOptions).start();
   var bWavy = new Wavy(bOptions).start();
   var cWavy = new Wavy(cOptions).start();
+  var dWavy = new Wavy(dOptions).start();
 
   var start = document.getElementById('js-demo-start');
   var stop = document.getElementById('js-demo-stop');

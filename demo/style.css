@@ -96,6 +96,7 @@ pre {
 .demo-a { background: #26C6DA; }
 .demo-b { background: #F5D133; }
 .demo-c { background: #4DB6AC; }
+.demo-d { background: #5c3ce3; }
 
 .demo-a .wavy-photo {
     position: absolute;
@@ -115,5 +116,12 @@ pre {
     position: absolute;
     top: 100px;
     left: 100px;
+    margin: -20px 0 0 -20px;
+}
+
+.demo-d .wavy-photo {
+    position: absolute;
+    top: 30%;
+    right: 30%;
     margin: -20px 0 0 -20px;
 }

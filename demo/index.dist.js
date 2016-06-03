@@ -42,9 +42,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     selector: '.js-demo-c'
   };
 
+  var dOptions = {
+    radiuses: [10, 30, 50, 80, 120, 200],
+    hexFillColor: '#fff',
+    hexStrokeColor: '#fff',
+    duration: 1000,
+    selectorEl: document.querySelector('.js-demo-d')
+  };
+
   var aWavy = new _Wavy2.default(aOptions).start();
   var bWavy = new _Wavy2.default(bOptions).start();
   var cWavy = new _Wavy2.default(cOptions).start();
+  var dWavy = new _Wavy2.default(dOptions).start();
 
   var start = document.getElementById('js-demo-start');
   var stop = document.getElementById('js-demo-stop');
@@ -1168,7 +1177,7 @@ function make(options) {
       this.selector = options.selector;
       this.centerWave = options.centerWave;
       this.centerWaveSelector = options.centerWaveSelector || defaultCenterWaveSelector;
-      this.selectorEl = null;
+      this.selectorEl = this.options.selectorEl || null;
 
       this.generateCircles();
       this.createCanvas();
@@ -1313,7 +1322,7 @@ function make(options) {
       value: function createCanvas() {
         canvas = document.createElement('canvas');
 
-        var el = document.querySelector(this.selector);
+        var el = this.selectorEl ? this.selectorEl : document.querySelector(this.selector);
 
         if (el === null) {
           throw new Error('Not found element: ' + this.selector + ' in the DOM');

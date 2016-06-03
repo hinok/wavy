@@ -947,7 +947,7 @@ function make(options) {
       this.selector = options.selector;
       this.centerWave = options.centerWave;
       this.centerWaveSelector = options.centerWaveSelector || defaultCenterWaveSelector;
-      this.selectorEl = null;
+      this.selectorEl = this.options.selectorEl || null;
 
       this.generateCircles();
       this.createCanvas();
@@ -1092,7 +1092,7 @@ function make(options) {
       value: function createCanvas() {
         canvas = document.createElement('canvas');
 
-        var el = document.querySelector(this.selector);
+        var el = this.selectorEl ? this.selectorEl : document.querySelector(this.selector);
 
         if (el === null) {
           throw new Error('Not found element: ' + this.selector + ' in the DOM');

@@ -27,7 +27,7 @@ export default function make(options) {
       this.selector = options.selector;
       this.centerWave = options.centerWave;
       this.centerWaveSelector = options.centerWaveSelector || defaultCenterWaveSelector;
-      this.selectorEl = null;
+      this.selectorEl = this.options.selectorEl || null;
 
       this.generateCircles();
       this.createCanvas();
@@ -119,7 +119,7 @@ export default function make(options) {
     createCanvas() {
       canvas = document.createElement('canvas');
 
-      const el = document.querySelector(this.selector);
+      const el = this.selectorEl ? this.selectorEl : document.querySelector(this.selector);
 
       if (el === null) {
         throw new Error(`Not found element: ${this.selector} in the DOM`);
