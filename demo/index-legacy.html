@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Wavy Canvas</title>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="/dist/style.css">
+    <link rel="stylesheet" href="/demo/style.css">
+  </head>
+  <body>
+
+    <div class="site-container">
+
+      <div class="demo-a demo-container demo-container--vh-full">
+        <div class="js-demo-a wavy-container">
+          <div class="wavy-photo wavy-photo--40">
+            <img src="/demo/assets/photo.jpg">
+          </div>
+        </div>
+
+        <div class="demo-container-options">
+          <pre>var options = {
+  radiuses: [10, 30, 50, 80, 120, 160, 200, 280],
+  hexFillColor: '#fff',
+  hexStrokeColor: '#fff',
+  onlyWaves: false,
+  duration: 3000,
+  selector: '.js-demo-a',
+  centerWave: {
+    x: 250,
+    y: 250
+  }
+};</pre>
+        </div>
+      </div>
+
+      <div class="demo-b demo-container demo-container--vh-full">
+        <div class="js-demo-b wavy-container">
+          <div class="js-wavy-center wavy-photo wavy-photo--40">
+            <img src="/demo/assets/photo.jpg">
+          </div>
+        </div>
+
+        <div class="demo-container-options demo-container-options--left">
+          <pre>var options = {
+  radiuses: [10, 20, 30, 40, 50, 60, 70, 80],
+  hexFillColor: '#fff',
+  hexStrokeColor: '#fff',
+  duration: 5000,
+  selector: '.js-demo-b'
+};</pre>
+        </div>
+
+        <div class="demo-container-buttons">
+          <button id="js-demo-start">Start</button>
+          <button id="js-demo-stop">Stop</button>
+        </div>
+      </div>
+
+      <div class="demo-c demo-container demo-container--vh-full">
+        <div class="js-demo-c wavy-container">
+          <div class="js-wavy-center wavy-photo wavy-photo--40">
+            <img src="/demo/assets/photo.jpg">
+          </div>
+        </div>
+
+        <div class="demo-container-options">
+          <pre>var options = {
+  radiuses: [10, 30, 50, 80, 120, 500],
+  hexFillColor: '#fff',
+  hexStrokeColor: '#fff',
+  duration: 1000,
+  selector: '.js-demo-c'
+};</pre>
+        </div>
+      </div>
+
+      <div class="demo-d demo-container demo-container--vh-full">
+        <div class="js-demo-d wavy-container">
+          <div class="js-wavy-center wavy-photo wavy-photo--40">
+            <img src="/demo/assets/photo.jpg">
+          </div>
+        </div>
+
+        <div class="demo-container-options demo-container-options--left">
+          <pre>var options = {
+  radiuses: [10, 30, 50, 80, 120, 200],
+  hexFillColor: '#fff',
+  hexStrokeColor: '#fff',
+  duration: 2500,
+  selectorEl: document.querySelector('.js-demo-d')
+};</pre>
+        </div>
+      </div>
+
+    </div>
+
+    <script src="/dist/wavy.min.js"></script>
+    <script>
+    (function(Wavy) {
+      var aOptions = {
+        radiuses: [10, 30, 50, 80, 120, 160, 200, 280],
+        hexFillColor: '#fff',
+        hexStrokeColor: '#fff',
+        onlyWaves: false,
+        duration: 3000,
+        selector: '.js-demo-a',
+        centerWave: {
+          x: 250,
+          y: 250
+        }
+      };
+
+      var bOptions = {
+        radiuses: [10, 20, 40, 80, 160, 320, 640, 1024],
+        hexFillColor: '#fff',
+        hexStrokeColor: '#fff',
+        duration: 5000,
+        selector: '.js-demo-b'
+      };
+
+      var cOptions = {
+        radiuses: [10, 30, 50, 80, 120, 500],
+        hexFillColor: '#fff',
+        hexStrokeColor: '#fff',
+        duration: 1000,
+        selector: '.js-demo-c'
+      };
+
+      var dOptions = {
+        radiuses: [10, 30, 50, 80, 120, 200],
+        hexFillColor: '#fff',
+        hexStrokeColor: '#fff',
+        duration: 1000,
+        selectorEl: document.querySelector('.js-demo-d')
+      };
+
+      var aWavy = new Wavy(aOptions).start();
+      var bWavy = new Wavy(bOptions).start();
+      var cWavy = new Wavy(cOptions).start();
+      var dWavy = new Wavy(dOptions).start();
+
+      var start = document.getElementById('js-demo-start');
+      var stop = document.getElementById('js-demo-stop');
+
+      start.addEventListener('click', bWavy.start.bind(bWavy));
+      stop.addEventListener('click', bWavy.stop.bind(bWavy));
+    })(window.Wavy);
+    </script>
+
+  </body>
+</html>

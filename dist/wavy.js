@@ -1070,7 +1070,7 @@ function make(options) {
 
             circle.x = this.centerWave.x;
             circle.y = this.centerWave.y;
-            circle.setFillStyle(this.hexFillColor, 0);
+            circle.setFillAlpha(0);
           }
         } catch (err) {
           _didIteratorError2 = true;
