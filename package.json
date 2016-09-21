@@ -43,7 +43,7 @@
     "document-offset": "^1.0.4",
     "easing-js": "^1.0.1",
     "hex-rgb": "^1.0.0",
-    "hidpi-canvas": "github:jondavidjohn/hidpi-canvas-polyfill",
+    "hidpi-canvas": "hinok/hidpi-canvas-polyfill#fix/iOS10-webkitBackingStorePixelRatio",
     "object-assign": "^4.1.0",
     "raf": "^3.2.0"
   }
