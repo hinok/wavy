@@ -1,6 +1,6 @@
 {
   "name": "wavy-canvas",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Create a wave animation on the canvas",
   "main": "dist/wavy.js",
   "keywords": [
