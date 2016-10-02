@@ -14,7 +14,7 @@ Can be easily used in AMD / CommonJS / ES6 / legacy environments.
 
 ## Demo
 
-Open <http://plnkr.co/edit/9oeIUGNaFO6uU7REh8Pa>
+Open <http://codepen.io/hinok/pen/xOwrKJ>
 
 ## Usage
 
