@@ -4,7 +4,7 @@ import Wavy from '../src/Wavy';
 docReady(() => {
 
   var aOptions = {
-    radiuses: [10, 30, 50, 80, 120, 160, 200, 280],
+    radiuses: [10, 30, 50, 100],
     hexFillColor: '#fff',
     hexStrokeColor: '#fff',
     onlyWaves: false,
@@ -48,7 +48,7 @@ docReady(() => {
   var start = document.getElementById('js-demo-start');
   var stop = document.getElementById('js-demo-stop');
 
-  start.addEventListener('click', ::bWavy.start);
-  stop.addEventListener('click', ::bWavy.stop);
+  start.addEventListener('click', bWavy.start.bind(bWavy));
+  stop.addEventListener('click', bWavy.stop.bind(bWavy));
 
 });

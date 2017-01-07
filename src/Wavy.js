@@ -1,88 +1,52 @@
-import 'hidpi-canvas/dist/hidpi-canvas';
-import {default as raf, cancel as caf} from 'raf';
-import objectAssign from 'object-assign';
 import easing from 'easing-js';
+import assign from 'lodash/assign';
+import debounce from 'lodash/debounce';
 import Circle from './Circle';
 import offsetParent from './offsetParent';
+import getPixelRatio from './getPixelRatio';
 
-export default function make(options) {
-  var rafId;
-  var canvas;
-  var context;
-  var canvasWidth;
-  var canvasHeight;
-  var circles = [];
-  var totalIterations;
-  var currentIteration;
-  var defaultCenterWaveSelector = '.js-wavy-center';
+const raf = window.requestAnimationFrame;
+const caf = window.cancelAnimationFrame;
+
+export default function make(userOptions = {}) {
+  let rafId;
+  let canvas;
+  let context;
+  let canvasWidth;
+  let canvasHeight;
+  let totalIterations;
+  let currentIteration;
+  let circles;
+  let biggestCircle;
+  const pixelRatio = getPixelRatio();
+  const debouncedSetup = debounce(setup, 150);
+  const FRAMERATE = 60;
+
+  const defaults = {
+    hexFillColor: '#fff',
+    hexStrokeColor: '#fff',
+    onlyWaves: true,
+    radiuses: [10, 30, 50, 80, 120, 160, 200],
+    duration: 3000,
+    selector: undefined,
+    selectorEl: undefined,
+    centerWaveSelector: '.js-wavy-center',
+    centerWave: undefined,
+  };
+
+  const options = assign({}, defaults, userOptions);
 
   class Wavy {
-    constructor(options) {
-      this.options = objectAssign({}, options);
-      this.hexFillColor = options.hexFillColor;
-      this.hexStrokeColor = options.hexStrokeColor;
-      this.onlyWaves = typeof options.onlyWaves === 'undefined' ? true : options.onlyWaves;
-      this.radiuses = options.radiuses;
-      this.duration = options.duration;
-      this.selector = options.selector;
-      this.centerWave = options.centerWave;
-      this.centerWaveSelector = options.centerWaveSelector || defaultCenterWaveSelector;
-      this.selectorEl = this.options.selectorEl || null;
-
-      this.generateCircles();
-      this.createCanvas();
-      this.setupCanvas();
-      this.setupCenterWave();
-      this.setupAnimation();
-      this.attachEvents();
-    }
-
-    generateCircles() {
-      for (let radius of this.radiuses) {
-        circles.push(new Circle(radius, this.hexFillColor, this.hexStrokeColor));
-      }
-    }
-
-    setupCanvas() {
-      canvas.removeAttribute('width');
-      canvas.removeAttribute('height');
-      canvas.removeAttribute('style');
-
-      canvasWidth = canvas.clientWidth;
-      canvasHeight = canvas.clientHeight;
-
-      canvas.width = canvasWidth;
-      canvas.height = canvasHeight;
-
-      // hidpi-canvas overrides getContext() method and set again width and height for canvas
-      // based on screen hidpi ratio, then canvas is rescaled down by CSS width and height props
-      context = canvas.getContext('2d');
-    }
-
-    setupCenterWave() {
-      if (this::hasOptionsCenterWave()) {
-        return;
-      }
-
-      const centerWaveEl = this.selectorEl.querySelector(this.centerWaveSelector);
-
-      if (centerWaveEl === null) {
-        this.centerWave = {
-          x: canvasWidth / 2,
-          y: canvasHeight / 2
-        };
-
-        return;
-      }
-
-      // We have centerWave element somewhere in the DOM
-      // and centerWave wasn't set directly thus we have to calculate centerWave manually
-      this.centerWave = offsetParent(this.selectorEl, centerWaveEl);
+    constructor() {
+      createCircles();
+      appendCanvas();
+      setup();
+      attachEvents();
     }
 
     start() {
       if (!isDrawing()) {
-        this::draw();
+        draw();
       }
 
       return this;
@@ -97,90 +61,183 @@ export default function make(options) {
       return this;
     }
 
-    attachEvents() {
-      window.addEventListener('resize', () => {
-        this.setupCanvas();
-        this.setupCenterWave();
-        this.setupAnimation();
-      });
+    destroy() {
+      // Just in case if animation is still in progress
+      this.stop();
+
+      detachEvents();
+
+      // Remove all references to DOM elements
+      options.selectorEl = undefined;
+      options.centerWaveEl = undefined;
+      canvas = undefined;
+      context = undefined;
     }
 
-    setupAnimation() {
-      totalIterations = this.duration / 1000 * 60;
-      currentIteration = 0;
-
-      for (let circle of circles) {
-        circle.x = this.centerWave.x;
-        circle.y = this.centerWave.y;
-        circle.setFillAlpha(0);
-      }
-    }
-
-    createCanvas() {
-      canvas = document.createElement('canvas');
-
-      const el = this.selectorEl ? this.selectorEl : document.querySelector(this.selector);
-
-      if (el === null) {
-        throw new Error(`Not found element: ${this.selector} in the DOM`);
-      }
-
-      el.appendChild(canvas);
-
-      this.selectorEl = el;
+    getOptions() {
+      return options;
     }
   }
 
+  function createCircles() {
+    const { radiuses, hexFillColor, hexStrokeColor } = options;
+    const scaledRadiuses = radiuses.map(radius => radius * pixelRatio);
+    circles = scaledRadiuses.map(radius => new Circle({
+      radius,
+      hexFillColor,
+      hexStrokeColor,
+    }));
+
+    biggestCircle = getBiggestCircle();
+  }
+
+  function getBiggestCircle() {
+    const sorted = circles.sort((c1, c2) => c1.radius < c2.radius);
+
+    // Sorted array contains the biggest circle at the beginning
+    return sorted[0];
+  }
+
+  function appendCanvas() {
+    if (!options.selectorEl) {
+      options.selectorEl = document.querySelector(options.selector);
+    }
+
+    if (!options.selectorEl) {
+      throw new Error(`No defined selector element, check selectorEl and selector options.`);
+    }
+
+    canvas = document.createElement('canvas');
+    context = canvas.getContext('2d');
+    options.selectorEl.appendChild(canvas);
+  }
+
+  function attachEvents() {
+    window.addEventListener('resize', debouncedSetup);
+  }
+
+  function detachEvents() {
+    window.removeEventListener('resize', debouncedSetup);
+  }
+
+  function setup() {
+    setupCanvas();
+    setupCenterWave();
+    setupAnimation();
+  }
+
+  function setupCanvas() {
+    canvas.removeAttribute('width');
+    canvas.removeAttribute('height');
+    canvas.removeAttribute('style');
+
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+
+    canvasWidth = width * pixelRatio;
+    canvasHeight = height * pixelRatio;
+
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+  }
+
+  function setupCenterWave() {
+    const { selectorEl, centerWaveSelector } = options;
+    const centerWaveEl = selectorEl.querySelector(centerWaveSelector);
+    let x;
+    let y;
+
+    if (hasUserOptionsCenterWave()) {
+      x = userOptions.centerWave.x * pixelRatio;
+      y = userOptions.centerWave.y * pixelRatio;
+    } else if (centerWaveEl) {
+      const offset = offsetParent(selectorEl, centerWaveEl);
+      x = offset.x * pixelRatio;
+      y = offset.y * pixelRatio;
+    } else {
+      x = canvasWidth / 2;
+      y = canvasHeight / 2;
+    }
+
+    options.centerWave = {
+      x: Math.floor(x),
+      y: Math.floor(y),
+    };
+  }
+
   /**
-   * @private
    * @returns {boolean}
    */
-  function hasOptionsCenterWave() {
-    return (
-      this.options.centerWave !== null &&
-      typeof this.options.centerWave === 'object' &&
-      typeof this.options.centerWave.x === 'number' &&
-      typeof this.options.centerWave.y === 'number'
-    );
+  function hasUserOptionsCenterWave() {
+    const { centerWave } = userOptions;
+    const isObject = o => o !== null && typeof o === 'object';
+    const isNumber = n => typeof n === 'number';
+    return isObject(centerWave) && isNumber(centerWave.x) && isNumber(centerWave.y);
   }
 
-  /**
-   * @private
-   */
-  function draw() {
-    context.clearRect(0, 0, canvasWidth, canvasHeight);
+  function setupAnimation() {
+    totalIterations = options.duration / 1000 * FRAMERATE;
+    currentIteration = 0;
 
     for (let circle of circles) {
-      // This is madness...
-      // When changeInValue is equal to -1 which is what we basically want...
-      // Safari has weird bug and display black, non-transparent circles in one frame
-      // which looks like animation glitch.
-      // It occurs only in Safari 9.1.1 on OS X 10.11.5
-
-      // All easing functions has this form in terms of parameters which they take
-      // (currentIteration, startValue, changeInValue, totalIterations)
-      var opacity = easing.easeInOutCubic(currentIteration, 1, -0.99, totalIterations);
-      var scale = easing.easeInOutCubic(currentIteration, 1, 0.618, totalIterations);
-
-      circle.setScale({x: scale, y: scale});
-
-      if (!this.onlyWaves) {
-        circle.setFillAlpha(opacity);
-      }
-
-      circle.setStrokeAlpha(opacity);
-
-      circle.draw(context);
+      circle.x = options.centerWave.x;
+      circle.y = options.centerWave.y;
+      circle.setFillAlpha(0);
     }
-
-    currentIteration = (currentIteration < totalIterations) ? currentIteration + 1 : 0;
-
-    rafId = raf(() => this::draw());
   }
 
   function isDrawing() {
     return typeof rafId !== 'undefined';
   }
 
-  return new Wavy(options);
+  function draw() {
+    const opacityStartValue = 1;
+    /*
+     * When opacityChangeInValue is equal to -1
+     * Safari has a bug and render black non-transparent circles in one of rendered frames
+     * Occurs only in Safari 9.1.1 on OS X 10.11.5
+     */
+    const opacityChangeInValue = -0.99;
+    const scaleStartValue = 1;
+    const scaleChangeInValue = 0.618;
+    const opacity = easing.easeInOutCubic(currentIteration, opacityStartValue, opacityChangeInValue, totalIterations);
+    const scale = easing.easeInOutCubic(currentIteration, scaleStartValue, scaleChangeInValue, totalIterations);
+
+    const dirtyRegion = getDirtyRegion();
+    context.clearRect(dirtyRegion.x, dirtyRegion.y, dirtyRegion.width, dirtyRegion.height);
+
+    // Use process.env.NODE_ENV for removing this part of code
+    // context.fillStyle = 'rgba(0,255,0,0.2)';
+    // context.fillRect(dirtyRegion.x, dirtyRegion.y, dirtyRegion.width, dirtyRegion.height);
+
+    for (const circle of circles) {
+      circle.scaleRadius(scale);
+
+      if (!options.onlyWaves) {
+        circle.setFillAlpha(opacity);
+      }
+
+      circle.setStrokeAlpha(opacity);
+      circle.draw(context);
+    }
+
+    currentIteration = (currentIteration < totalIterations) ? currentIteration + 1 : 0;
+
+    rafId = raf(draw);
+  }
+
+  function getDirtyRegion() {
+    const rect = biggestCircle.getBoundingRect();
+
+    return {
+      x: Math.max(rect.x, 0),
+      y: Math.max(rect.y, 0),
+      width: Math.min(rect.width, canvasWidth),
+      height: Math.min(rect.height, canvasHeight),
+    };
+  }
+
+  return new Wavy();
 }
