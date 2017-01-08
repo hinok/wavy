@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <!--
+
+    Work in progress.
+    Proof of concept. Very basic.
+
+    -->
     <title>Performance - Wavy Canvas</title>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -103,6 +109,8 @@
         t = previousTime = performance.now();
 
         const tick = function() {
+          // Could you use here argument passed from requestAnimationFrame
+          // instead of performance.now()...
           t = performance.now();
           let elapsedTime = t - previousTime;
           previousTime = t;

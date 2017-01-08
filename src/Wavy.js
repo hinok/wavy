@@ -4,23 +4,50 @@ import debounce from 'lodash/debounce';
 import Circle from './Circle';
 import offsetParent from './offsetParent';
 import getPixelRatio from './getPixelRatio';
-
 const raf = window.requestAnimationFrame;
 const caf = window.cancelAnimationFrame;
+const pixelRatio = getPixelRatio();
+const isObject = o => o !== null && typeof o === 'object';
+const isNumber = n => typeof n === 'number';
 
 export default function make(userOptions = {}) {
-  let rafId;
-  let canvas;
-  let context;
-  let canvasWidth;
-  let canvasHeight;
-  let totalIterations;
-  let currentIteration;
-  let circles;
-  let biggestCircle;
-  const pixelRatio = getPixelRatio();
-  const debouncedRelayout = debounce(relayout, 150);
   const FRAMERATE = 60;
+  const debouncedRelayout = debounce(relayout, 150);
+
+  const easings = [
+    'linear',
+    'easeInQuad',
+    'easeOutQuad',
+    'easeInOutQuad',
+    'easeInCubic',
+    'easeOutCubic',
+    'easeInOutCubic',
+    'easeInQuart',
+    'easeOutQuart',
+    'easeInOutQuart',
+    'easeInQuint',
+    'easeOutQuint',
+    'easeInOutQuint',
+    'easeInSine',
+    'easeOutSine',
+    'easeInOutSine',
+    'easeInExpo',
+    'easeOutExpo',
+    'easeInOutExpo',
+    'easeInCirc',
+    'easeOutCirc',
+    'easeInOutCirc',
+    'easeInElastic',
+    'easeOutElastic',
+    'easeInOutElastic',
+    'easeInBack',
+    'easeOutBack',
+    'easeInOutBack',
+    'easeInBounce',
+    'easeOutBounce',
+    'easeInOutBounce',
+  ];
+
   const animationProps = {
     opacity: [],
     scale: [],
@@ -36,9 +63,20 @@ export default function make(userOptions = {}) {
     selectorEl: undefined,
     centerWaveSelector: '.js-wavy-center',
     centerWave: undefined,
+    easing: 'easeOutCubic',
   };
 
   const options = assign({}, defaults, userOptions);
+
+  let rafId;
+  let canvas;
+  let context;
+  let canvasWidth;
+  let canvasHeight;
+  let totalIterations;
+  let currentIteration;
+  let circles;
+  let biggestCircle;
 
   class Wavy {
     constructor() {
@@ -70,17 +108,15 @@ export default function make(userOptions = {}) {
       // Just in case if animation is still in progress
       this.stop();
 
+      // Cleanup browser
       detachEvents();
+      canvas.parentNode.removeChild(canvas);
 
-      // Remove all references to DOM elements
+      // Cleanup references
       options.selectorEl = undefined;
       options.centerWaveEl = undefined;
       canvas = undefined;
       context = undefined;
-    }
-
-    getOptions() {
-      return options;
     }
   }
 
@@ -92,13 +128,6 @@ export default function make(userOptions = {}) {
       hexFillColor,
       hexStrokeColor,
     }));
-  }
-
-  function getBiggestCircle() {
-    const sorted = circles.sort((c1, c2) => c1.radius < c2.radius);
-
-    // Sorted array contains the biggest circle at the beginning
-    return sorted[0];
   }
 
   function appendCanvas() {
@@ -126,7 +155,6 @@ export default function make(userOptions = {}) {
   function relayout() {
     setupCanvas();
     setupCenterWave();
-    setupCircles();
   }
 
   function setupCanvas() {
@@ -168,6 +196,11 @@ export default function make(userOptions = {}) {
       x: Math.floor(x),
       y: Math.floor(y),
     };
+
+    for (let circle of circles) {
+      circle.x = options.centerWave.x;
+      circle.y = options.centerWave.y;
+    }
   }
 
   /**
@@ -175,23 +208,11 @@ export default function make(userOptions = {}) {
    */
   function hasUserOptionsCenterWave() {
     const { centerWave } = userOptions;
-    const isObject = o => o !== null && typeof o === 'object';
-    const isNumber = n => typeof n === 'number';
     return isObject(centerWave) && isNumber(centerWave.x) && isNumber(centerWave.y);
   }
 
-  function setupCircles() {
-    for (let circle of circles) {
-      circle.x = options.centerWave.x;
-      circle.y = options.centerWave.y;
-      circle.setFillAlpha(0);
-    }
-  }
-
   function setupAnimation() {
-    totalIterations = options.duration / 1000 * FRAMERATE;
-    currentIteration = 0;
-
+    const easingName = options.easing;
     const opacityStartValue = 1;
     /*
      * When opacityChangeInValue is equal to -1
@@ -202,14 +223,24 @@ export default function make(userOptions = {}) {
     const scaleStartValue = 1;
     const scaleChangeInValue = 0.618;
 
+    totalIterations = options.duration / 1000 * FRAMERATE;
+    currentIteration = 0;
+
     for (let i = 0; i < totalIterations; i++) {
-      const opacity = easing.easeInOutCubic(i, opacityStartValue, opacityChangeInValue, totalIterations);
-      const scale = easing.easeInOutCubic(i, scaleStartValue, scaleChangeInValue, totalIterations);
+      const opacity = easing[easingName](i, opacityStartValue, opacityChangeInValue, totalIterations);
+      const scale = easing[easingName](i, scaleStartValue, scaleChangeInValue, totalIterations);
       animationProps.opacity[i] = opacity;
       animationProps.scale[i] = scale;
     }
 
     biggestCircle = getBiggestCircle();
+  }
+
+  function getBiggestCircle() {
+    const sorted = circles.sort((c1, c2) => c1.radius < c2.radius);
+
+    // Sorted array contains the biggest circle at the beginning
+    return sorted[0];
   }
 
   function isDrawing() {

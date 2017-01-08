@@ -4,9 +4,7 @@
 
 Small library which gives you ability to create a wave animation on the `<canvas>`.
 
-Includes `hidpi-canvas-polyfill` ([src](https://github.com/jondavidjohn/hidpi-canvas-polyfill)) by @jondavidjohn
-
-Can be easily used in AMD / CommonJS / ES6 / legacy environments.
+Can be easily used in AMD / CommonJS / ES6 environments.
 
 ## _"A picture is worth a thousand words"_
 
@@ -35,6 +33,7 @@ var wavy = new Wavy(options);
 - `selectorEl` {Element}, optional - A DOM element where `<canvas>` should be appended. Overrides `selector` option
 - `centerWaveSelector` {string}, defaults `.js-wavy-center`, optional - A selector of a DOM element which set center (source) of waves. Must be a child of DOM element set by properties: `selector` or `selectorEl`
 - `centerWave` {Object}, optional - An object containing props `x`, `y` which indicate center of waves. Overrides `centerWaveSelector` option.
+- `easing`, {string}, easing name used for animation. Look at default options to see list of available easings.
 
 **Regular usage**
 
@@ -62,9 +61,65 @@ new Wavy({
     x: 500,
     y: 500
   },
-  centerWaveSelector: '.js-child-of-dom-element'
+  centerWaveSelector: '.js-child-of-dom-element',
+  easing: 'easeInBounce'
 });
 ```
+
+**Default options**
+
+```javascript
+const defaults = {
+  hexFillColor: '#fff',
+  hexStrokeColor: '#fff',
+  onlyWaves: true,
+  radiuses: [10, 30, 50, 80, 120, 160, 200],
+  duration: 3000,
+  selector: undefined,
+  selectorEl: undefined,
+  centerWaveSelector: '.js-wavy-center',
+  centerWave: undefined,
+  easing: 'easeOutCubic',
+};
+```
+
+**Available easings**
+
+```
+linear
+easeInQuad
+easeOutQuad
+easeInOutQuad
+easeInCubic
+easeOutCubic
+easeInOutCubic
+easeInQuart
+easeOutQuart
+easeInOutQuart
+easeInQuint
+easeOutQuint
+easeInOutQuint
+easeInSine
+easeOutSine
+easeInOutSine
+easeInExpo
+easeOutExpo
+easeInOutExpo
+easeInCirc
+easeOutCirc
+easeInOutCirc
+easeInElastic
+easeOutElastic
+easeInOutElastic
+easeInBack
+easeOutBack
+easeInOutBack
+easeInBounce
+easeOutBounce
+easeInOutBounce
+```
+
+`wavy-canvas` uses [easing-js](https://www.npmjs.com/package/easing-js) under the hood.
 
 For more details look at `demo` folder.
 
@@ -102,23 +157,23 @@ wavy.start();
 
 ### Javascript
 
-wavy.js  | wavy.js (gzip) | wavy.min.js | wavy.min.js (gzip)
--------- | -------------- | ----------- | ------------------
-33.94 KB | 8.64 KB        | 16.47 KB    | 5.19 KB
+wavy.js   | wavy.js (gzip) | wavy.min.js | wavy.min.js (gzip)
+--------- | -------------- | ----------- | ------------------
+119.21 KB | 28.04 KB       | 49.85 KB    | 14.35 KB
 
 ### CSS
 
 style.css | style.css (gzip)
 --------- | ----------------
-327 B     | 205 B
-0.33 KB   | 0.21 KB
+523 B     | 271 B
+0.51 KB   | 0.26 KB
 
 ## Development
 
 ```bash
-npm install         # quite obvious... ¯\_( ͠° ͟ʖ °͠ )_/¯
-npm start           # starts server, opens browser, watches for files changes
-npm run build       # build js and scss
+yarn install
+yarn start
+yarn run build
 ```
 
 ## License
