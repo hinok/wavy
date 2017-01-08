@@ -99,6 +99,7 @@ export default class Circle {
     context.fillStyle = this.fillStyle;
     context.strokeStyle = this.strokeStyle;
     context.lineWidth = this.lineWidth;
+
     context.fill();
     context.stroke();
   }

@@ -19,8 +19,12 @@ export default function make(userOptions = {}) {
   let circles;
   let biggestCircle;
   const pixelRatio = getPixelRatio();
-  const debouncedSetup = debounce(setup, 150);
+  const debouncedRelayout = debounce(relayout, 150);
   const FRAMERATE = 60;
+  const animationProps = {
+    opacity: [],
+    scale: [],
+  };
 
   const defaults = {
     hexFillColor: '#fff',
@@ -40,7 +44,8 @@ export default function make(userOptions = {}) {
     constructor() {
       createCircles();
       appendCanvas();
-      setup();
+      relayout();
+      setupAnimation();
       attachEvents();
     }
 
@@ -87,8 +92,6 @@ export default function make(userOptions = {}) {
       hexFillColor,
       hexStrokeColor,
     }));
-
-    biggestCircle = getBiggestCircle();
   }
 
   function getBiggestCircle() {
@@ -113,17 +116,17 @@ export default function make(userOptions = {}) {
   }
 
   function attachEvents() {
-    window.addEventListener('resize', debouncedSetup);
+    window.addEventListener('resize', debouncedRelayout);
   }
 
   function detachEvents() {
-    window.removeEventListener('resize', debouncedSetup);
+    window.removeEventListener('resize', debouncedRelayout);
   }
 
-  function setup() {
+  function relayout() {
     setupCanvas();
     setupCenterWave();
-    setupAnimation();
+    setupCircles();
   }
 
   function setupCanvas() {
@@ -177,10 +180,7 @@ export default function make(userOptions = {}) {
     return isObject(centerWave) && isNumber(centerWave.x) && isNumber(centerWave.y);
   }
 
-  function setupAnimation() {
-    totalIterations = options.duration / 1000 * FRAMERATE;
-    currentIteration = 0;
-
+  function setupCircles() {
     for (let circle of circles) {
       circle.x = options.centerWave.x;
       circle.y = options.centerWave.y;
@@ -188,11 +188,10 @@ export default function make(userOptions = {}) {
     }
   }
 
-  function isDrawing() {
-    return typeof rafId !== 'undefined';
-  }
+  function setupAnimation() {
+    totalIterations = options.duration / 1000 * FRAMERATE;
+    currentIteration = 0;
 
-  function draw() {
     const opacityStartValue = 1;
     /*
      * When opacityChangeInValue is equal to -1
@@ -202,10 +201,26 @@ export default function make(userOptions = {}) {
     const opacityChangeInValue = -0.99;
     const scaleStartValue = 1;
     const scaleChangeInValue = 0.618;
-    const opacity = easing.easeInOutCubic(currentIteration, opacityStartValue, opacityChangeInValue, totalIterations);
-    const scale = easing.easeInOutCubic(currentIteration, scaleStartValue, scaleChangeInValue, totalIterations);
 
+    for (let i = 0; i < totalIterations; i++) {
+      const opacity = easing.easeInOutCubic(i, opacityStartValue, opacityChangeInValue, totalIterations);
+      const scale = easing.easeInOutCubic(i, scaleStartValue, scaleChangeInValue, totalIterations);
+      animationProps.opacity[i] = opacity;
+      animationProps.scale[i] = scale;
+    }
+
+    biggestCircle = getBiggestCircle();
+  }
+
+  function isDrawing() {
+    return typeof rafId !== 'undefined';
+  }
+
+  function draw() {
     const dirtyRegion = getDirtyRegion();
+    const opacity = animationProps.opacity[currentIteration];
+    const scale = animationProps.scale[currentIteration];
+
     context.clearRect(dirtyRegion.x, dirtyRegion.y, dirtyRegion.width, dirtyRegion.height);
 
     // Use process.env.NODE_ENV for removing this part of code
