@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Performance - Wavy Canvas</title>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/demo/normalize.css">
+    <link rel="stylesheet" href="/dist/style.css">
+    <style>
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+
+      .header {
+        z-index: 1;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 80px;
+        padding: 20px;
+        background: #fff;
+        box-shadow: 0 2px 8px -3px rgba(0, 0, 0, 0.20);
+      }
+
+      .box {
+        float: left;
+        overflow: hidden;
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="header">
+      <button>Start</button>
+      <div class="stats"></div>
+    </div>
+
+    <div class="container"></div>
+
+    <script src="/dist/wavy.min.js"></script>
+
+    <script>
+      const containerEl = document.querySelector('.container');
+      const statsEl = document.querySelector('.stats');
+
+      const colors = [
+        '#26C6DA',
+        '#F5D133',
+        '#4DB6AC',
+        '#5c3ce3',
+      ];
+
+      const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
+
+      const addWavy = () => {
+        const div = document.createElement('div');
+        div.classList.add('box', 'wavy-container');
+        div.style.backgroundColor = getRandomColor();
+        containerEl.appendChild(div);
+
+        const wavy = new Wavy({
+          radiuses: [10, 20, 40, 80, 160],
+          hexFillColor: '#fff',
+          hexStrokeColor: '#fff',
+          duration: 2000,
+          selectorEl: div,
+        });
+
+        wavy.start();
+      };
+
+      let isScheduled = false;
+
+      const scheduleWavy = (delay, callback) => {
+        if (isScheduled) {
+          return;
+        }
+
+        isScheduled = true;
+
+        setTimeout(() => {
+          window.requestAnimationFrame(() => {
+            addWavy();
+            callback();
+            isScheduled = false;
+          });
+        }, delay);
+      };
+
+      const test = () => {
+        const FRAMERATE = 30;
+        const MAX_FRAME_TIME = 1000 / FRAMERATE;
+        const MAX_SLOW_TIMES = 10;
+        let t;
+        let previousTime;
+        let wavyInstances = 0;
+        let slowTimes = 0;
+
+        t = previousTime = performance.now();
+
+        const tick = function() {
+          t = performance.now();
+          let elapsedTime = t - previousTime;
+          previousTime = t;
+
+          if (elapsedTime < MAX_FRAME_TIME || slowTimes < MAX_SLOW_TIMES) {
+              if (elapsedTime < MAX_FRAME_TIME) {
+                  scheduleWavy(500, () => {
+                    wavyInstances += 1;
+                  });
+              } else {
+                  slowTimes += 1;
+              }
+
+              window.requestAnimationFrame(tick);
+          } else {
+            statsEl.innerHTML = `No Wavy - ${wavyInstances} in ${MAX_FRAME_TIME}`;
+          }
+        };
+
+        window.requestAnimationFrame(tick);
+      };
+
+      test();
+    </script>
+  </body>
+</html>

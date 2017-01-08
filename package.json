@@ -22,7 +22,7 @@
     "build:scss": "node-sass --output-style compressed src/style.scss -o dist",
     "build:demo": "browserify demo/index.js -t babelify -o demo/index.dist.js",
     "build:js": "browserify src/Wavy.js -t babelify -s Wavy | derequire > dist/wavy.js",
-    "postbuild:js": "uglifyjs dist/wavy.js -o dist/wavy.min.js -m -r 'define,require,exports' -c 'dead_code,conditionals,unused,warnings,drop_console'"
+    "postbuild:js": "uglifyjs dist/wavy.js --output dist/wavy.min.js --mangle --screw-ie8 --reserved 'define,module,require,exports' --compress 'dead_code,conditionals,unused,warnings,drop_console,drop_debugger'"
   },
   "devDependencies": {
     "babel-plugin-add-module-exports": "^0.2.1",
