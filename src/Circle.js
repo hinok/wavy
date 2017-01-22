@@ -1,25 +1,55 @@
 import hexRGB from 'hex-rgb';
 
 export default class Circle {
-  constructor(radius = 40, hexFillColor = "#ff0000", hexStrokeColor) {
-    this.radius = radius;
-    this.setFillStyle(hexFillColor, 0);
-    this.setStrokeStyle(hexStrokeColor || hexFillColor, 1);
+  constructor(options) {
+    const defaults = {
+      radius: 40,
+      hexFillColor: '#ffffff',
+      hexStrokeColor: '#ffffff',
+    };
+
+    this.options = {
+      ...defaults,
+      ...options,
+    };
+
+    this.radius = this.options.radius;
+    this.setFillStyle(this.options.hexFillColor, 0);
+    this.setStrokeStyle(this.options.hexStrokeColor, 1);
 
     this.x = 0;
     this.y = 0;
-    this.rotation = 0;
-    this.scaleX = 1;
-    this.scaleY = 1;
-    this.lineWidth = 0.5; // 0.5 is a bit thinner than 1
+    this.lineWidth = 1;
   }
 
-  /**
-   * @param {{x: number, y:number}} scale
-   */
-  setScale(scale) {
-    this.scaleX = (scale.x < 0) ? 0 : scale.x;
-    this.scaleY = (scale.y < 0) ? 0 : scale.y;
+  scaleRadius(scale = 1) {
+    scale = scale < 0 ? 0 : scale;
+    this.radius = Math.floor(this.options.radius * scale);
+  }
+
+  getBoundingRect() {
+    const size = this.radius * 2 + this.lineWidth * 2;
+    let x = this.x - (this.radius + this.lineWidth);
+    let y = this.y - (this.radius + this.lineWidth);
+    let subtractWidth = 0;
+    let subtractHeight = 0;
+
+    if (x < 0) {
+      subtractWidth = Math.abs(x);
+      x = 0;
+    }
+
+    if (y < 0) {
+      subtractHeight = Math.abs(y);
+      y = 0;
+    }
+
+    return {
+      x,
+      y,
+      width: size - subtractWidth,
+      height: size - subtractHeight,
+    };
   }
 
   /**
@@ -60,28 +90,18 @@ export default class Circle {
    * @param {CanvasRenderingContext2D} context
    */
   draw(context) {
-    context.save();
-
-    context.translate(this.x, this.y);
-    context.rotate(this.rotation);
-    context.scale(this.scaleX, this.scaleY);
-
-    context.lineWidth = this.lineWidth;
-    context.fillStyle = this.fillStyle;
-
     context.beginPath();
-    // context.arc(x, y, radius, start_angle, end_angle, anti-clockwise)
-    context.arc(0, 0, this.radius, 0, (Math.PI * 2), true);
-    context.closePath();
+    const startAngle = 0;
+    const endAngle = Math.PI * 2;
+    const antiClockwise = true;
+    context.arc(this.x, this.y, this.radius, startAngle, endAngle, antiClockwise);
+
+    context.fillStyle = this.fillStyle;
+    context.strokeStyle = this.strokeStyle;
+    context.lineWidth = this.lineWidth;
 
     context.fill();
-
-    if (this.lineWidth > 0) {
-      context.strokeStyle = this.strokeStyle;
-      context.stroke();
-    }
-
-    context.restore();
+    context.stroke();
   }
 }
 

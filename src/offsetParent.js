@@ -4,11 +4,11 @@
  * @returns {{x: number, y: number}}
  */
 export default function offsetParent(parent, child) {
-  var pRect = parent.getBoundingClientRect();
-  var cRect = child.getBoundingClientRect();
+  var p = parent.getBoundingClientRect();
+  var c = child.getBoundingClientRect();
 
   return {
-    x: -(pRect.left - cRect.left - cRect.width / 2),
-    y: -(pRect.top - cRect.top - cRect.height / 2)
+    x: -(p.left - c.left - c.width / 2),
+    y: -(p.top - c.top - c.height / 2)
   };
 }

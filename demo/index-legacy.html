@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <link rel="stylesheet" href="/demo/normalize.css">
     <link rel="stylesheet" href="/dist/style.css">
     <link rel="stylesheet" href="/demo/style.css">
   </head>
@@ -22,7 +22,7 @@
 
         <div class="demo-container-options">
           <pre>var options = {
-  radiuses: [10, 30, 50, 80, 120, 160, 200, 280],
+  radiuses: [10, 30, 50, 100],
   hexFillColor: '#fff',
   hexStrokeColor: '#fff',
   onlyWaves: false,
@@ -45,7 +45,7 @@
 
         <div class="demo-container-options demo-container-options--left">
           <pre>var options = {
-  radiuses: [10, 20, 30, 40, 50, 60, 70, 80],
+  radiuses: [10, 20, 40, 80, 160, 320, 640, 1024],
   hexFillColor: '#fff',
   hexStrokeColor: '#fff',
   duration: 5000,
@@ -89,7 +89,7 @@
   radiuses: [10, 30, 50, 80, 120, 200],
   hexFillColor: '#fff',
   hexStrokeColor: '#fff',
-  duration: 2500,
+  duration: 1000,
   selectorEl: document.querySelector('.js-demo-d')
 };</pre>
         </div>
@@ -101,7 +101,7 @@
     <script>
     (function(Wavy) {
       var aOptions = {
-        radiuses: [10, 30, 50, 80, 120, 160, 200, 280],
+        radiuses: [10, 30, 50, 100],
         hexFillColor: '#fff',
         hexStrokeColor: '#fff',
         onlyWaves: false,
